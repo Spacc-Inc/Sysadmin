@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Restarting fragile services.
+
+docker restart synapse
+docker restart goofy_benz
+systemctl restart mx-puppet-discord.service
+docker restart invidious_invidious-db_1

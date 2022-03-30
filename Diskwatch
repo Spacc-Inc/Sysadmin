@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Checking for accidental disk disconnect,
+# waiting for automatic remount,
+# and restarting fragile services.
+
+ScriptPath=$(realpath $0)
+ScriptDir=$(dirname $ScriptPath)
+cd $ScriptDir
+
+Dev=$(ls /dev/sd?)
+LastDev=$Dev
+
+while true
+do
+	Dev=$(ls /dev/sd?)
+
+	if [[ "$Dev" != "$LastDev" ]]
+	then
+		while [[ -z $Dev ]] # This assumes only 1 disk present under /dev/sd?
+		do
+			Dev=$(ls /dev/sd?)
+			sleep 5
+		done
+
+		LastDev=$Dev
+		sleep 10
+		./FraServRestart
+	fi
+
+	sleep 5
+done

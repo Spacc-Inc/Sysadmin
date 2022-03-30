@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Checking for accidental WiFi disconnects,
+# and reconnecting (this script may need to run as root).
+
+Network="" # The desired network to attempt reconnection
+
+while true
+do
+	i=$(cat /sys/class/net/wlp1s0/carrier)
+	if [ $i != 1 ] # Technically broken but working so let's not touch it
+	then
+		echo "reconnecting"
+		nmcli con up "$Network"
+		echo "reconnected successfully"
+	fi
+	sleep 10
+done

@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Generating a simple systemd service.
+
+if [[ "$(whoami)" != "root" ]]
+then
+	echo "This script must run as root."
+	exit 1
+fi
+if [[ -z "$1" || -z "$2" || -z "$3" ]]
+then
+	echo "Usage:"
+	echo ""$0" <Name> <User> <Exec>"
+	exit 1
+fi
+
+echo "Creating service:"
+echo "  Name: "$1""
+echo "  User: "$2""
+echo "  Exec: "$3""
+
+File="/etc/systemd/system/"$1".service"
+touch "File"
+echo "[Unit]" >> "$File"
+echo "Description="$1"" >> "$File"
+echo "After=network.target" >> "$File"
+echo "StartLimitIntervalSec=0" >> "$File"
+echo "[Service]" >> "$File"
+echo "Type=simple" >> "$File"
+echo "Restart=always" >> "$File"
+echo "RestartSec=1" >> "$File"
+echo "User="$2"" >> "$File"
+echo "ExecStart="$3"" >> "$File"
+echo "[Install]" >> "$File"
+echo "WantedBy=multi-user.target" >> "$File"
