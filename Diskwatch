@@ -17,12 +17,15 @@ do
 
 	if [[ "$Dev" != "$LastDev" ]]
 	then
+		echo "Disk change detected"
 		while [[ -z $Dev ]] # This assumes only 1 disk present under /dev/sd?
 		do
+			echo "Waiting for disk"
 			Dev=$(ls /dev/sd?)
 			sleep 5
 		done
 
+		echo "Restarting services"
 		LastDev=$Dev
 		sleep 10
 		./FraServRestart
