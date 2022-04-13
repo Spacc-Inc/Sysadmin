@@ -4,9 +4,7 @@
 # waiting for automatic remount,
 # and restarting fragile services.
 
-ScriptPath=$(realpath $0)
-ScriptDir=$(dirname $ScriptPath)
-cd $ScriptDir
+cd "$( dirname "$( realpath "$0" )" )"
 
 Dev=$(ls /dev/sd?)
 LastDev=$Dev
@@ -27,7 +25,7 @@ do
 
 		echo "Restarting services"
 		LastDev=$Dev
-		sleep 10
+		sleep 30
 		./FraServRestart
 	fi
 

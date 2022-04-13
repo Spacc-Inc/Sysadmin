@@ -5,14 +5,20 @@
 
 Network="" # The desired network to attempt reconnection
 
+cd "$( dirname "$( realpath "$0" )" )"
+
 while true
 do
-	i=$(cat /sys/class/net/wlp1s0/carrier)
-	if [ $i != 1 ] # Technically broken but working so let's not touch it
+	ping -q -w 10 -c 1 192.168.1.1  > /dev/null && Gateway=1 || Gateway=0
+	Carrier=$(cat /sys/class/net/wlp1s0/carrier)
+
+	if [ "$Carrier" != 1 ] || [ "$Gateway" != 1 ]
 	then
-		echo "reconnecting"
-		nmcli con up "$Network"
-		echo "reconnected successfully"
+		sleep 20
+		echo "Connection unresponsive, reconnecting"
+		nmcli con down "$Network"
+		nmcli con up "$Network" passwd-file WiFiReconnect.psk
+		echo "Probably reconnected"
 	fi
-	sleep 10
+	sleep 20
 done

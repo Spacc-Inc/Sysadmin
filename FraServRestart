@@ -6,3 +6,5 @@ docker restart synapse
 docker restart goofy_benz
 systemctl restart mx-puppet-discord.service
 docker restart invidious_invidious-db_1
+sudo -u octo /Server/SpaccCraft/Uncorrupt.sh
+systemctl restart spacccraft.service

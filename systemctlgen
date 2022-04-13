@@ -20,7 +20,7 @@ echo "  User: "$2""
 echo "  Exec: "$3""
 
 File="/etc/systemd/system/"$1".service"
-touch "$File"
+echo "" > "$File"
 echo "[Unit]" >> "$File"
 echo "Description="$1"" >> "$File"
 echo "After=network.target" >> "$File"
