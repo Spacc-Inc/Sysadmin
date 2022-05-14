@@ -19,17 +19,17 @@ echo "  Name: "$1""
 echo "  User: "$2""
 echo "  Exec: "$3""
 
-File="/etc/systemd/system/"$1".service"
-echo "" > "$File"
-echo "[Unit]" >> "$File"
-echo "Description="$1"" >> "$File"
-echo "After=network.target" >> "$File"
-echo "StartLimitIntervalSec=0" >> "$File"
-echo "[Service]" >> "$File"
-echo "Type=simple" >> "$File"
-echo "Restart=always" >> "$File"
-echo "RestartSec=1" >> "$File"
-echo "User="$2"" >> "$File"
-echo "ExecStart="$3"" >> "$File"
-echo "[Install]" >> "$File"
-echo "WantedBy=multi-user.target" >> "$File"
+cat > "/etc/systemd/system/"$1".service" << [EOF]
+[Unit]
+Description="$1"
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User="$2"
+ExecStart="$3"
+[Install]
+WantedBy=multi-user.target
+[EOF]
