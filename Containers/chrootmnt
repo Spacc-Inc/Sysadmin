@@ -1,7 +1,7 @@
 #!/bin/sh
 
-mount --bind /dev ""$1"/dev"
-mount --bind /proc ""$1"/proc"
-#mount --bind /sys ""$1"/sys"
+mount --bind /dev "$1/dev"
+mount --bind /proc "$1/proc"
+# mount --bind /sys "$1/sys"
 
 chroot "$@"

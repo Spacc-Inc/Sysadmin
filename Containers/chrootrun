@@ -1,0 +1,6 @@
+#!/bin/sh
+
+Path="$1"; shift
+Runner="$1"; shift
+
+chroot "$Path" su -l $Runner -c "DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY PULSE_SERVER=127.0.0.1 $@"
