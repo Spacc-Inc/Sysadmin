@@ -4,10 +4,16 @@
 # waiting for automatic remount,
 # and restarting fragile services.
 
+# This script assumes only 1 disk present under /dev/sd?,
+# and only one partition (p1) to mount.
+
 cd "$( dirname "$( realpath "$0" )" )"
 
 Dev=$(ls /dev/sd?)
 LastDev=$Dev
+
+mkdir -p /media/Disk
+mount ${Dev}1 /media/Disk
 
 while true
 do
@@ -16,7 +22,7 @@ do
 	if [[ "$Dev" != "$LastDev" ]]
 	then
 		echo "Disk change detected"
-		while [[ -z $Dev ]] # This assumes only 1 disk present under /dev/sd?
+		while [[ -z $Dev ]]
 		do
 			echo "Waiting for disk"
 			Dev=$(ls /dev/sd?)
@@ -25,6 +31,7 @@ do
 
 		echo "Restarting services"
 		LastDev=$Dev
+		mount ${Dev}1 /media/Disk
 		sleep 30
 		./FraServRestart
 	fi
