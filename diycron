@@ -1,0 +1,36 @@
+#!/bin/sh
+# diycron: Script to be running as root daemon as a (non-conflicting) cron alternative which simply works.
+# Note: Except when required by the shell, we use 0=false, 1=true for internal commands, for consistency.
+
+If() { test "$1" = 1 && return 0 || return 1; }
+Ifn() { test "$1" = 0 && return 0 || return 1; }
+
+GetDaySeconds() {
+	echo "$(date -d "1970-01-01 UTC $(date +%T)" +%s)"
+}
+IsMin() {
+	test $(($(GetDaySeconds)>$1)) = 1 && test $(($(GetDaySeconds)<$1+60)) = 1 && echo 1 || echo 0
+}
+hm2s() { echo $((($1*60*60) + ($2*60))); }
+
+# Setting variables (that always have a "Job" prefix) for each job, to prevent multiple execution.
+ResetJobs() {
+	for Job in \
+		1 2
+	do eval "Job$Job=0"
+	done
+}
+
+ResetJobs
+while true
+do
+	# Declaration of all cronjobs like they are normal shell commands, made easy thanks to integrated functions.
+	Ifn $Job1 && If $(IsMin $(hm2s 5 30)) && date > /tmp/CronTest.log && Job1=1 # Daily checking for if the script is working
+	Ifn $Job2 && If $(IsMin $(hm2s 3 0)) && test $(($(date +%s) / 86400 % 3)) = 0 && /Server/Scripts/CronNightBackup.sh && Job2=1 & # Big data backup every 3 days
+	If $(IsMin $(hm2s 4 30)) && test $(($(date +%s) / 86400 % 2)) = 0 && sleep 60 && reboot # System reboot every 2 days (every even d.)
+
+	# Status of all jobs is reset at one time of the day, before or after all execute or have executed (in time).
+	If $(IsMin $(hm2s 0 0)) && ResetJobs
+	# Cooldown to wait at each cycle, to save on resources (Should always be less than 60 seconds!).
+	sleep 5
+done
